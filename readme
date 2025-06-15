@@ -1,0 +1,16 @@
+🎤 Windows 麦克风检测工具
+一个简单的 Rust + Node.js 原生扩展，用于检测 Windows 默认麦克风的当前音量级别 🔊
+
+✨ 功能
+获取麦克风当前音量（0.0 ~ 1.0）
+
+自动检测麦克风是否可用 🏷️
+
+轻量级 Node.js 原生扩展 ⚡
+
+🛠️ 技术栈
+Rust (通过 windows-rs 调用 Win32 API)
+
+Node-API (NAPI) 实现 Node.js 绑定
+
+支持 Windows 10+ 🖥️

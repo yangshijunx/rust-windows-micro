@@ -1,0 +1,17 @@
+{
+  "name": "rust-micro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "rsbuild": "napi build --release --strip ./native",
+    "test": "node ./test/main.js",
+    "dev": "npm run rsbuild && npm run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@napi-rs/cli": "^2.18.4"
+  }
+}
