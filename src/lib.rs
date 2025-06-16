@@ -74,7 +74,8 @@ pub fn get_microphone_sensitivity() -> Result<f32>  {
 
 // 设置麦克风录音灵敏度 (0.0-1.0)
 #[napi]
-pub fn set_microphone_sensitivity(volume: f32) -> Result<()> {
+pub fn set_microphone_sensitivity(volume: f64) -> Result<()> {
+    let volume = volume as f32;
     // 确保音量在有效范围内
     if volume < 0.0 || volume > 1.0 {
         return Err(Error::from_reason("音量值必须在0.0到1.0之间"));
