@@ -71,3 +71,56 @@ pub fn get_microphone_sensitivity() -> Result<f32>  {
     // };
     return Ok(volume);
 }
+
+// 设置麦克风录音灵敏度 (0.0-1.0)
+#[napi]
+pub fn set_microphone_sensitivity(volume: f32) -> Result<()> {
+    // 确保音量在有效范围内
+    if volume < 0.0 || volume > 1.0 {
+        return Err(Error::from_reason("音量值必须在0.0到1.0之间"));
+    }
+
+    init_com()?;
+    // 创建设备枚举器实例
+    let enumerator: IMMDeviceEnumerator = unsafe {
+        CoCreateInstance(
+            &MMDeviceEnumerator,
+            None,
+            CLSCTX_INPROC_SERVER
+        ).map_err(|e| Error::from_reason(format!("创建设备枚举器实例失败: {e}")))?
+    };
+    
+    // 获取默认输入设备
+    let device: IMMDevice = unsafe {
+        enumerator.GetDefaultAudioEndpoint(
+            eCapture,
+            eMultimedia
+        ).map_err(|e| Error::from_reason(format!("获取默认音频设备失败: {e}")))?
+    };
+
+    // 判断设备状态
+    let state: DEVICE_STATE = unsafe {
+        device.GetState().map_err(|e| Error::from_reason(format!("获取设备状态失败: {e}")))?
+    };
+
+    if state != DEVICE_STATE_ACTIVE {
+        return Err(Error::from_reason("当前默认麦克风未插入或不可用"));
+    }
+
+    // 激活音量控制接口
+    let endpoint: IAudioEndpointVolume = unsafe {
+        device.Activate::<IAudioEndpointVolume>(CLSCTX_ALL, None)
+            .map_err(|e| Error::from_reason(format!("激活音量接口失败: {e}")))?
+    };
+
+    // 设置音量
+    unsafe {
+        endpoint.SetMasterVolumeLevelScalar(volume, None)
+            .map_err(|e| Error::from_reason(format!("设置音量失败: {e}")))?
+    };
+
+    // unsafe { 
+    //     CoUninitialize()
+    // };
+    Ok(())
+}
