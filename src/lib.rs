@@ -116,7 +116,7 @@ pub fn set_microphone_sensitivity(volume: f64) -> Result<()> {
 
     // 设置音量
     unsafe {
-        endpoint.SetMasterVolumeLevelScalar(volume, None)
+        endpoint.SetMasterVolumeLevelScalar(volume, std::ptr::null())
             .map_err(|e| Error::from_reason(format!("设置音量失败: {e}")))?
     };
 
